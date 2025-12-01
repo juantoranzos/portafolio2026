@@ -1,2 +1,98 @@
 @import "tailwindcss";
 
+@theme {
+    --color-background: var(--background);
+    --color-foreground: var(--foreground);
+    --color-primary: var(--primary);
+    --color-primary-foreground: var(--primary-foreground);
+    --color-secondary: var(--secondary);
+    --color-secondary-foreground: var(--secondary-foreground);
+    --color-accent: var(--accent);
+    --color-accent-foreground: var(--accent-foreground);
+    --color-muted: var(--muted);
+    --color-muted-foreground: var(--muted-foreground);
+    --color-card: var(--card);
+    --color-card-foreground: var(--card-foreground);
+    --color-border: var(--border);
+}
+
+/* Light Mode Defaults */
+:root {
+    --background: #ffffff;
+    --foreground: #0f172a;
+    /* Slate 950 */
+
+    --primary: #4f46e5;
+    /* Indigo 600 */
+    --primary-foreground: #ffffff;
+
+    --secondary: #f1f5f9;
+    /* Slate 100 */
+    --secondary-foreground: #0f172a;
+
+    --accent: #6366f1;
+    /* Indigo 500 */
+    --accent-foreground: #ffffff;
+
+    --muted: #f1f5f9;
+    /* Slate 100 */
+    --muted-foreground: #64748b;
+    /* Slate 500 */
+
+    --card: #ffffff;
+    --card-foreground: #0f172a;
+
+    --border: #e2e8f0;
+    /* Slate 200 */
+}
+
+/* Dark Mode Overrides */
+.dark {
+    --background: #020617;
+    /* Slate 950 (Base for gradient) */
+    --foreground: #f8fafc;
+    /* Slate 50 */
+
+    --primary: #818cf8;
+    /* Indigo 400 */
+    --primary-foreground: #ffffff;
+
+    --secondary: #1e293b;
+    /* Slate 800 */
+    --secondary-foreground: #f8fafc;
+
+    --accent: #6366f1;
+    /* Indigo 500 */
+    --accent-foreground: #ffffff;
+
+    --muted: #1e293b;
+    /* Slate 800 */
+    --muted-foreground: #94a3b8;
+    /* Slate 400 */
+
+    --card: #0f172a;
+    /* Slate 900 */
+    --card-foreground: #f8fafc;
+
+    --border: #1e293b;
+    /* Slate 800 */
+}
+
+body {
+    background-color: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-geist-sans), sans-serif;
+    overflow-x: hidden;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Dark Mode Gradient Background */
+.dark body {
+    background: linear-gradient(to bottom, #0f172a, #020617);
+    /* Dark Blue to Black */
+    background-attachment: fixed;
+}
+
+html {
+    scroll-behavior: smooth;
+}
