@@ -25,7 +25,7 @@ const NavegacionComponent = () => {
   return (
     <header
       className={`fixed left-0 top-0 z-50 w-full transition duration-300 ${isScrolled
-        ? "border-b border-border bg-background/80 backdrop-blur-md"
+        ? "border-b border-border  backdrop-blur-md"
         : "border-b border-transparent bg-transparent"
         }`}
     >

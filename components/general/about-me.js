@@ -80,7 +80,7 @@ const AboutMe = () => {
                         <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-20"></div>
                         <div className="relative h-full w-full overflow-hidden rounded-xl border border-white/10 shadow-2xl">
                             <Image
-                                src="/yo.webp"
+                                src="/yoeditada.webp"
                                 alt="Foto de perfil"
                                 fill
                                 className="object-cover"

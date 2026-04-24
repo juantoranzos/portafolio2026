@@ -14,6 +14,11 @@ const HeaderComponent = () => {
     { name: "MongoDB" },
     { name: "Redux Toolkit" },
     { name: "AWS" },
+    { name: "Vercel" },
+    { name: "Git" },
+    { name: "REST APIs" },
+    { name: "Zustand" },
+    { name: "Linux" },
   ];
 
   const container = {

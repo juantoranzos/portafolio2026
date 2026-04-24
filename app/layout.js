@@ -17,6 +17,14 @@ const geistMono = Geist_Mono({
 export const metadata = {
   title: "Portfolio Juan Toranzos - Desarrollador Full Stack",
   description: "Portfolio de Juan Toranzos",
+  icons: {
+    icon: [
+      {
+        url: "/favicon-light.svg",
+        type: "image/svg+xml",
+      },
+    ],
+  },
 };
 
 export default function RootLayout({ children }) {
