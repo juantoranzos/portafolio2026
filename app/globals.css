@@ -1,98 +1,346 @@
 @import "tailwindcss";
 
-@theme {
-    --color-background: var(--background);
-    --color-foreground: var(--foreground);
-    --color-primary: var(--primary);
-    --color-primary-foreground: var(--primary-foreground);
-    --color-secondary: var(--secondary);
-    --color-secondary-foreground: var(--secondary-foreground);
-    --color-accent: var(--accent);
-    --color-accent-foreground: var(--accent-foreground);
-    --color-muted: var(--muted);
-    --color-muted-foreground: var(--muted-foreground);
-    --color-card: var(--card);
-    --color-card-foreground: var(--card-foreground);
-    --color-border: var(--border);
-}
-
-/* Light Mode Defaults */
+/* ─────────────────────────────────────────────────────────────
+   DESIGN TOKENS — all values as CSS custom properties.
+   Tailwind utilities are generated from @theme below.
+   No magic numbers in component files.
+───────────────────────────────────────────────────────────── */
 :root {
-    --background: #ffffff;
-    --foreground: #0f172a;
-    /* Slate 950 */
+  /* Surfaces — warm graphite, layered */
+  --bg:        #0E0D0C;
+  --surface-1: #161412;
+  --surface-2: #1E1B18;
+  --surface-3: #262220;
 
-    --primary: #4f46e5;
-    /* Indigo 600 */
-    --primary-foreground: #ffffff;
+  /* Hairlines & grid */
+  --line:        rgba(242, 237, 230, 0.08);
+  --line-strong: rgba(242, 237, 230, 0.16);
 
-    --secondary: #f1f5f9;
-    /* Slate 100 */
-    --secondary-foreground: #0f172a;
+  /* Text — warm off-white ramp */
+  --text-1: #F4EFE8;
+  --text-2: #B7B0A6;
+  --text-3: #7C766D;
 
-    --accent: #6366f1;
-    /* Indigo 500 */
-    --accent-foreground: #ffffff;
+  /* Accent — warm silver cream (swappable) */
+  --accent:      #F9F3E4;
+  --accent-soft: rgba(249, 243, 228, 0.12);
+  --accent-ink:  #0E0D0C;
 
-    --muted: #f1f5f9;
-    /* Slate 100 */
-    --muted-foreground: #64748b;
-    /* Slate 500 */
+  /* Radius — tight / engineered */
+  --r-sm:  4px;
+  --r-md:  8px;
+  --r-lg:  14px;
+  --r-pill: 999px;
 
-    --card: #ffffff;
-    --card-foreground: #0f172a;
+  /* Layout */
+  --section-y: clamp(5rem, 10vw, 9rem);
+  --gutter:    clamp(1.25rem, 5vw, 4rem);
+  --maxw:      1200px;
 
-    --border: #e2e8f0;
-    /* Slate 200 */
+  /* Motion */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --dur-fast: 180ms;
+  --dur:      320ms;
+  --dur-slow: 560ms;
 }
 
-/* Dark Mode Overrides */
-.dark {
-    --background: #020617;
-    /* Slate 950 (Base for gradient) */
-    --foreground: #f8fafc;
-    /* Slate 50 */
+/* ─────────────────────────────────────────────────────────────
+   TAILWIND v4 THEME — generates utility classes from tokens
+───────────────────────────────────────────────────────────── */
+@theme {
+  /* Colors */
+  --color-bg:         #0E0D0C;
+  --color-surface-1:  #161412;
+  --color-surface-2:  #1E1B18;
+  --color-surface-3:  #262220;
+  --color-text-1:     #F4EFE8;
+  --color-text-2:     #B7B0A6;
+  --color-text-3:     #7C766D;
+  --color-accent:     #F9F3E4;
+  --color-accent-ink: #0E0D0C;
 
-    --primary: #818cf8;
-    /* Indigo 400 */
-    --primary-foreground: #ffffff;
+  /* Fonts — resolved via next/font CSS vars at runtime */
+  --font-display: var(--font-archivo);
+  --font-body:    var(--font-inter);
+  --font-mono:    var(--font-jetbrains);
 
-    --secondary: #1e293b;
-    /* Slate 800 */
-    --secondary-foreground: #f8fafc;
-
-    --accent: #6366f1;
-    /* Indigo 500 */
-    --accent-foreground: #ffffff;
-
-    --muted: #1e293b;
-    /* Slate 800 */
-    --muted-foreground: #94a3b8;
-    /* Slate 400 */
-
-    --card: #0f172a;
-    /* Slate 900 */
-    --card-foreground: #f8fafc;
-
-    --border: #1e293b;
-    /* Slate 800 */
+  /* Radius — overrides Tailwind defaults with engineered values */
+  --radius-sm:   4px;
+  --radius-md:   8px;
+  --radius-lg:   14px;
+  --radius-pill: 999px;
 }
 
-body {
-    background-color: var(--background);
-    color: var(--foreground);
-    font-family: var(--font-geist-sans), sans-serif;
-    overflow-x: hidden;
-    transition: background-color 0.3s ease, color 0.3s ease;
+/* ─────────────────────────────────────────────────────────────
+   CUSTOM UTILITIES — rgba tokens that can't live in @theme
+───────────────────────────────────────────────────────────── */
+@utility border-line {
+  border-color: var(--line);
 }
 
-/* Dark Mode Gradient Background */
-.dark body {
-    background: linear-gradient(to bottom, #0f172a, #020617);
-    /* Dark Blue to Black */
-    background-attachment: fixed;
+@utility border-line-strong {
+  border-color: var(--line-strong);
+}
+
+@utility bg-accent-soft {
+  background-color: var(--accent-soft);
+}
+
+/* ─────────────────────────────────────────────────────────────
+   COMPONENT PATTERNS — reusable design-system classes
+───────────────────────────────────────────────────────────── */
+@layer components {
+  /* Centered container with fluid gutters */
+  .site-wrap {
+    max-width: var(--maxw);
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: var(--gutter);
+    padding-right: var(--gutter);
+  }
+
+  /* Vertical section rhythm */
+  .section-block {
+    padding-top: var(--section-y);
+    padding-bottom: var(--section-y);
+  }
+
+  /* Standard card — surface-1 bg, hairline border */
+  .design-card {
+    background-color: var(--surface-1);
+    border: 1px solid var(--line);
+    border-radius: var(--r-lg);
+    transition:
+      border-color var(--dur-fast) var(--ease-out),
+      box-shadow  var(--dur-fast) var(--ease-out);
+  }
+  .design-card:hover {
+    border-color: var(--line-strong);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  }
+
+  /* Monospace annotation label */
+ 
+
+  /* Primary CTA button */
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background-color: var(--accent);
+    color: var(--accent-ink);
+    font-weight: 600;
+    font-size: 0.875rem;
+    padding: 0.75rem 1.375rem;
+    border-radius: var(--r-md);
+    transition:
+      transform    var(--dur-fast) var(--ease-out),
+      box-shadow   var(--dur-fast) var(--ease-out);
+  }
+  .btn-primary:hover {
+    transform: scale(1.02);
+    animation: aura-pulse 1.6s ease-in-out infinite;
+  }
+  .btn-primary:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  /* Secondary CTA button */
+  .btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--text-1);
+    font-weight: 600;
+    font-size: 0.875rem;
+    padding: 0.75rem 1.375rem;
+    border: 1px solid var(--line-strong);
+    border-radius: var(--r-md);
+    background-color: transparent;
+    transition:
+      border-color     var(--dur-fast) var(--ease-out),
+      background-color var(--dur-fast) var(--ease-out);
+  }
+  .btn-secondary:hover {
+    border-color: var(--accent);
+    background-color: var(--surface-2);
+    animation: aura-pulse 1.6s ease-in-out infinite;
+  }
+  .btn-secondary:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  /* Ghost icon button (social links) */
+  .btn-ghost-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.625rem;
+    border: 1px solid var(--line-strong);
+    border-radius: var(--r-md);
+    color: var(--text-2);
+    background-color: transparent;
+    transition:
+      border-color var(--dur-fast) var(--ease-out),
+      color        var(--dur-fast) var(--ease-out);
+  }
+  .btn-ghost-icon:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    animation: aura-pulse 1.6s ease-in-out infinite;
+  }
+  .btn-ghost-icon:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  /* Availability status pill */
+  .status-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.375rem 0.875rem;
+    border: 1px solid var(--line);
+    border-radius: var(--r-pill);
+    background-color: var(--surface-2);
+  }
+
+  /* Blueprint crosshair corner mark */
+  .corner-mark {
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    opacity: 0;
+    transition: opacity var(--dur-fast) var(--ease-out);
+  }
+  .corner-mark::before,
+  .corner-mark::after {
+    content: '';
+    position: absolute;
+    background-color: var(--accent);
+  }
+  .corner-mark::before {
+    width: 1px;
+    height: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  .corner-mark::after {
+    height: 1px;
+    width: 100%;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+  .group:hover .corner-mark {
+    opacity: 1;
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────
+   KEYFRAMES
+───────────────────────────────────────────────────────────── */
+@keyframes marquee-scroll {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.3; }
+}
+
+@keyframes cursor-blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0; }
+}
+
+@keyframes aura-text-pulse {
+  0%, 100% {
+    text-shadow:
+      0 0  8px rgba(249, 243, 228, 0.90),
+      0 0 22px rgba(249, 243, 228, 0.55),
+      0 0 48px rgba(249, 243, 228, 0.28),
+      0 0 90px rgba(249, 243, 228, 0.10);
+  }
+  50% {
+    text-shadow:
+      0 0 14px rgba(249, 243, 228, 1.00),
+      0 0 36px rgba(249, 243, 228, 0.80),
+      0 0 70px rgba(249, 243, 228, 0.45),
+      0 0 120px rgba(249, 243, 228, 0.20);
+  }
+}
+
+.typewriter-aura {
+  text-shadow:
+    0 0  6px rgba(249, 243, 228, 0.50),
+    0 0 16px rgba(249, 243, 228, 0.22),
+    0 0 36px rgba(249, 243, 228, 0.08);
+}
+
+@keyframes aura-pulse {
+  0%, 100% {
+    box-shadow:
+      0 0  6px rgba(249, 243, 228, 0.50),
+      0 0 18px rgba(249, 243, 228, 0.24),
+      0 0 40px rgba(249, 243, 228, 0.10),
+      0 0 72px rgba(249, 243, 228, 0.04);
+  }
+  50% {
+    box-shadow:
+      0 0 10px rgba(249, 243, 228, 0.72),
+      0 0 28px rgba(249, 243, 228, 0.38),
+      0 0 56px rgba(249, 243, 228, 0.18),
+      0 0 96px rgba(249, 243, 228, 0.08);
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────
+   BASE STYLES
+───────────────────────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
 }
 
 html {
-    scroll-behavior: smooth;
+  scroll-behavior: smooth;
+  background-color: var(--bg);
+}
+
+body {
+  background-color: var(--bg);
+  color: var(--text-1);
+  font-family: var(--font-body), system-ui, sans-serif;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: var(--r-sm);
+}
+
+::selection {
+  background-color: var(--accent-soft);
+  color: var(--text-1);
+}
+
+/* ─────────────────────────────────────────────────────────────
+   REDUCED MOTION — non-negotiable
+───────────────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  /* Explicitly kill the infinite marquee */
+  .marquee-track {
+    animation: none !important;
+  }
 }

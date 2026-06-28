@@ -1,141 +1,248 @@
 "use client";
-import { Download, MoveRight, Github, Linkedin } from "lucide-react";
+
+import { Download, ArrowRight, Github, Linkedin } from "lucide-react";
 import Link from "next/link";
-import React from "react";
-import { motion } from "framer-motion";
+import React, { useState, useEffect, useRef } from "react";
+import { motion, useReducedMotion } from "framer-motion";
+import { useLanguage } from "@/lib/i18n/LanguageContext";
+import { translations } from "@/lib/i18n/translations";
 
-const HeaderComponent = () => {
-  const tecnologias = [
-    { name: "React" },
-    { name: "Next JS" },
-    { name: "TypeScript" },
-    { name: "Tailwind CSS" },
-    { name: "Node.js" },
-    { name: "MongoDB" },
-    { name: "Redux Toolkit" },
-    { name: "AWS" },
-    { name: "Vercel" },
-    { name: "Git" },
-    { name: "REST APIs" },
-    { name: "Zustand" },
-    { name: "Linux" },
-  ];
+const STAGGER_CONTAINER = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.1 } },
+};
 
-  const container = {
-    hidden: { opacity: 0 },
-    show: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1,
-      },
-    },
-  };
+const FADE_UP = {
+  hidden: { opacity: 0, y: 18 },
+  show: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.56, ease: [0.16, 1, 0.3, 1] },
+  },
+};
 
-  const item = {
-    hidden: { opacity: 0, y: 20 },
-    show: { opacity: 1, y: 0 },
-  };
+const TYPE_SPEED = 65;
+const ERASE_SPEED = 42;
+const PAUSE_AFTER_TYPE = 2400;
+const PAUSE_AFTER_ERASE = 350;
+
+function TypewriterWord({ words, reduced }) {
+  const [displayed, setDisplayed] = useState(words[0]);
+  const timerRef = useRef(null);
+  const wordIdxRef = useRef(0);
+
+  useEffect(() => {
+    // Reset when language changes
+    wordIdxRef.current = 0;
+    setDisplayed(words[0]);
+  }, [words]);
+
+  useEffect(() => {
+    if (reduced) return;
+
+    let cancelled = false;
+
+    const sleep = (ms) =>
+      new Promise((res) => {
+        timerRef.current = setTimeout(res, ms);
+      });
+
+    async function erase(word) {
+      for (let i = word.length - 1; i >= 0; i--) {
+        if (cancelled) return;
+        setDisplayed(word.slice(0, i));
+        if (i > 0) await sleep(ERASE_SPEED);
+      }
+    }
+
+    async function type(word) {
+      for (let i = 1; i <= word.length; i++) {
+        if (cancelled) return;
+        setDisplayed(word.slice(0, i));
+        if (i < word.length) await sleep(TYPE_SPEED);
+      }
+    }
+
+    async function loop() {
+      await sleep(PAUSE_AFTER_TYPE);
+      while (!cancelled) {
+        await erase(words[wordIdxRef.current]);
+        if (cancelled) break;
+        await sleep(PAUSE_AFTER_ERASE);
+        if (cancelled) break;
+        wordIdxRef.current = (wordIdxRef.current + 1) % words.length;
+        await type(words[wordIdxRef.current]);
+        if (cancelled) break;
+        await sleep(PAUSE_AFTER_TYPE);
+      }
+    }
+
+    loop();
+
+    return () => {
+      cancelled = true;
+      clearTimeout(timerRef.current);
+    };
+  }, [reduced, words]);
 
   return (
-    <header
-      id="inicio"
-      className="mx-auto mt-14 max-w-6xl px-4 text-center sm:mt-16 sm:px-6 lg:mt-20 lg:px-8"
+    <span
+      aria-live="polite"
+      aria-label={words[wordIdxRef.current]}
+      className={!reduced ? "typewriter-aura" : undefined}
     >
+      {reduced ? words[0] : displayed}
+      {!reduced && (
+        <span
+          aria-hidden="true"
+          style={{
+            display: "inline-block",
+            width: "0.08em",
+            height: "0.85em",
+            backgroundColor: "var(--accent)",
+            marginLeft: "0.06em",
+            verticalAlign: "text-bottom",
+            animation: "cursor-blink 1s step-end infinite",
+          }}
+        />
+      )}
+    </span>
+  );
+}
+
+const HeaderComponent = () => {
+  const prefersReducedMotion = useReducedMotion();
+  const { lang } = useLanguage();
+  const t = translations[lang].hero;
+
+  return (
+    <section
+      id="inicio"
+      className="relative site-wrap"
+      style={{
+        paddingTop: "clamp(7rem, 14vw, 10rem)",
+        paddingBottom: "clamp(3.5rem, 7vw, 5rem)",
+      }}
+    >
+      {/* Coordinate annotation */}
+      <span
+        aria-hidden="true"
+        className="mono-label absolute hidden sm:block"
+        style={{ top: "5rem", right: "calc(var(--gutter) + 0.75rem)" }}
+      >
+        — TUCUMÁN, AR
+      </span>
+
+      {/* Blueprint corner tick */}
+      <span
+        aria-hidden="true"
+        className="pointer-events-none absolute"
+        style={{
+          top: "5rem",
+          left: "0",
+          width: "12px",
+          height: "12px",
+          borderTop: "1px solid var(--line-strong)",
+          borderLeft: "1px solid var(--line-strong)",
+        }}
+      />
+
       <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="mx-auto mb-6 inline-flex items-center rounded-full border border-primary/30 bg-primary/10 px-4 py-2 text-sm text-primary"
-      >
-        <span>Disponible para proyectos</span>
-      </motion.div>
-
-      <motion.h1
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 0.1 }}
-        className="text-3xl font-semibold leading-tight sm:text-5xl md:text-6xl lg:text-7xl"
-      >
-        Construyo{" "}
-        <span className="text-primary">
-          Experiencias Web <br /> Modernas
-        </span>
-      </motion.h1>
-
-      <motion.p
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 0.2 }}
-        className="mt-4 text-base text-muted-foreground sm:mt-6 sm:text-lg md:text-xl"
-      >
-        Desarrollador Full Stack especializado en React y Next.js, <br />{" "}
-        creando interfaces modernas con código limpio y rendimiento excepcional.
-      </motion.p>
-
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 0.3 }}
-        className="mt-6 flex flex-col items-center justify-center gap-4 sm:flex-row"
-      >
-        <Link
-          href="#proyectos"
-          className="flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground transition hover:bg-primary/90 sm:w-auto sm:text-base"
-        >
-          Ver Proyectos <MoveRight className="h-4 w-4" />
-        </Link>
-        <a
-          href="/Juan_Toranzos_CV_ES_2.pdf"
-          download
-          className="flex w-full items-center justify-center gap-2 rounded-lg border border-border bg-secondary/50 px-6 py-3 text-sm font-semibold text-foreground transition hover:bg-secondary sm:w-auto sm:text-base"
-        >
-          Descargar CV <Download className="h-4 w-4" />{" "}
-        </a>
-      </motion.div>
-
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 0.4 }}
-        className="mt-6 flex items-center justify-center gap-4"
-      >
-        <a
-          href="https://github.com/juantoranzos"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="rounded-full border border-border bg-card p-3 text-muted-foreground transition hover:border-primary/50 hover:text-primary"
-        >
-          <Github className="h-5 w-5" />
-        </a>
-        <a
-          href="https://www.linkedin.com/in/juan-toranzos-b46b77253/"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="rounded-full border border-border bg-card p-3 text-muted-foreground transition hover:border-primary/50 hover:text-primary"
-        >
-          <Linkedin className="h-5 w-5" />
-        </a>
-      </motion.div>
-
-      <motion.section
-        variants={container}
-        initial="hidden"
+        variants={prefersReducedMotion ? undefined : STAGGER_CONTAINER}
+        initial={prefersReducedMotion ? { opacity: 1 } : "hidden"}
         animate="show"
-        className="mt-12 flex flex-wrap justify-center gap-3 sm:gap-4"
+        className="max-w-3xl"
       >
-        {tecnologias.map((t) => {
-          return (
-            <motion.div
-              variants={item}
-              key={t.name}
-              className="rounded-lg border border-border bg-card/50 px-4 py-2 text-sm backdrop-blur-sm transition hover:border-primary/50 hover:bg-card sm:px-5 sm:py-2.5 sm:text-base"
-            >
-              <p className="font-medium text-muted-foreground hover:text-foreground transition-colors">{t.name}</p>
-            </motion.div>
-          );
-        })}
-      </motion.section>
-    </header>
+        {/* Eyebrow */}
+        <motion.p
+          variants={prefersReducedMotion ? undefined : FADE_UP}
+          className="mono-label mb-8"
+        >
+          {t.eyebrow}
+        </motion.p>
+
+        {/* Display headline */}
+        <h1
+          className="font-display font-extrabold text-text-1"
+          style={{
+            fontSize: "clamp(2.75rem, 7vw, 5.5rem)",
+            lineHeight: "0.95",
+            letterSpacing: "-0.03em",
+          }}
+        >
+          <motion.span
+            variants={prefersReducedMotion ? undefined : FADE_UP}
+            className="block"
+          >
+            {t.line1}
+          </motion.span>
+          <motion.span
+            variants={prefersReducedMotion ? undefined : FADE_UP}
+            className="block"
+          >
+            {t.line2}
+          </motion.span>
+          <motion.span
+            variants={prefersReducedMotion ? undefined : FADE_UP}
+            className="block text-accent"
+          >
+            <TypewriterWord words={t.words} reduced={!!prefersReducedMotion} />
+          </motion.span>
+        </h1>
+
+        {/* Lede */}
+        <motion.p
+          variants={prefersReducedMotion ? undefined : FADE_UP}
+          className="mt-8 max-w-xl text-text-2"
+          style={{ fontSize: "1.0625rem", lineHeight: "1.65" }}
+        >
+          {t.lede}
+        </motion.p>
+
+        {/* CTAs */}
+        <motion.div
+          variants={prefersReducedMotion ? undefined : FADE_UP}
+          className="mt-10 flex flex-wrap gap-3"
+        >
+          <Link href="#proyectos" className="btn-primary">
+            {t.cta1} <ArrowRight className="h-4 w-4" aria-hidden="true" />
+          </Link>
+
+          <a
+            href="/Juan_Toranzos_CV_2026.pdf"
+            download
+            className="btn-secondary"
+          >
+            {t.cta2} <Download className="h-4 w-4" aria-hidden="true" />
+          </a>
+        </motion.div>
+
+        {/* Social links */}
+        <motion.div
+          variants={prefersReducedMotion ? undefined : FADE_UP}
+          className="mt-6 flex items-center gap-3"
+        >
+          <a
+            href="https://github.com/juantoranzos"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="GitHub de Juan Toranzos"
+            className="btn-ghost-icon"
+          >
+            <Github className="h-4 w-4" aria-hidden="true" />
+          </a>
+          <a
+            href="https://www.linkedin.com/in/juan-toranzos-b46b77253/"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="LinkedIn de Juan Toranzos"
+            className="btn-ghost-icon"
+          >
+            <Linkedin className="h-4 w-4" aria-hidden="true" />
+          </a>
+        </motion.div>
+      </motion.div>
+    </section>
   );
 };
 

@@ -4,94 +4,178 @@ import React from "react";
 import { motion } from "framer-motion";
 import { Code, Database, Layout, Server } from "lucide-react";
 import Image from "next/image";
+import { useLanguage } from "@/lib/i18n/LanguageContext";
+import { translations } from "@/lib/i18n/translations";
+
+const CAPABILITY_ICONS = [
+  <Layout className="h-5 w-5" aria-hidden="true" key="layout" />,
+  <Server className="h-5 w-5" aria-hidden="true" key="server" />,
+  <Database className="h-5 w-5" aria-hidden="true" key="database" />,
+  <Code className="h-5 w-5" aria-hidden="true" key="code" />,
+];
+
+const FADE_UP = {
+  hidden: { opacity: 0, y: 16 },
+  show: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.52, ease: [0.16, 1, 0.3, 1] },
+  },
+};
 
 const AboutMe = () => {
-    const features = [
-        {
-            icon: <Layout className="h-6 w-6" />,
-            title: "Frontend Development",
-            description: "Creación de interfaces responsivas y accesibles con React y Tailwind CSS.",
-        },
-        {
-            icon: <Server className="h-6 w-6" />,
-            title: "Backend Development",
-            description: "Desarrollo de APIs robustas y escalables con Node.js y Express.",
-        },
-        {
-            icon: <Database className="h-6 w-6" />,
-            title: "Database Management",
-            description: "Diseño y optimización de bases de datos SQL y NoSQL.",
-        },
-        {
-            icon: <Code className="h-6 w-6" />,
-            title: "Clean Code",
-            description: "Compromiso con las buenas prácticas y código mantenible.",
-        },
-    ];
+  const { lang } = useLanguage();
+  const t = translations[lang].about;
 
-    return (
-        <section id="sobre-mi" className="mx-auto max-w-6xl px-4 py-12 sm:px-6 sm:py-14 lg:px-8 lg:py-16">
-            <div className="grid gap-12 lg:grid-cols-2 lg:gap-8">
-                <motion.div
-                    initial={{ opacity: 0, x: -20 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.5 }}
+  return (
+    <section id="sobre-mi" className="site-wrap section-block">
+      <div className="grid gap-16 lg:grid-cols-2 lg:items-start lg:gap-12">
+        {/* Left column: text + capabilities */}
+        <div>
+          <motion.p
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true, amount: 0.2 }}
+            variants={FADE_UP}
+            className="mono-label mb-6"
+          >
+            {t.eyebrow}
+          </motion.p>
+
+          <motion.h2
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true, amount: 0.2 }}
+            variants={FADE_UP}
+            className="font-display font-bold text-text-1"
+            style={{
+              fontSize: "clamp(1.6rem, 3vw, 2.4rem)",
+              lineHeight: "1.05",
+              letterSpacing: "-0.015em",
+              textWrap: "balance",
+            }}
+          >
+            {t.heading}
+          </motion.h2>
+
+          <motion.p
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true, amount: 0.2 }}
+            variants={FADE_UP}
+            className="mt-5 text-text-2"
+            style={{ fontSize: "1.0625rem", lineHeight: "1.65", maxWidth: "54ch" }}
+          >
+            {t.body}
+          </motion.p>
+
+          {/* Capability cards */}
+          <div className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-2">
+            {t.capabilities.map((cap, i) => (
+              <motion.div
+                key={cap.title}
+                initial="hidden"
+                whileInView="show"
+                viewport={{ once: true, amount: 0.2 }}
+                variants={{
+                  hidden: { opacity: 0, y: 12 },
+                  show: {
+                    opacity: 1,
+                    y: 0,
+                    transition: {
+                      delay: i * 0.08,
+                      duration: 0.48,
+                      ease: [0.16, 1, 0.3, 1],
+                    },
+                  },
+                }}
+                className="design-card p-5"
+              >
+                <div
+                  className="mb-3 inline-flex items-center justify-center rounded-sm p-2 text-accent"
+                  style={{ backgroundColor: "var(--accent-soft)" }}
                 >
-                    <div className="inline-flex items-center rounded-full border border-primary/30 bg-primary/10 px-4 py-2 text-sm text-primary">
-                        <span>Sobre Mí</span>
-                    </div>
-                    <h2 className="mt-6 text-3xl font-bold tracking-tight sm:text-4xl">
-                        Pasión por crear <span className="text-primary">soluciones digitales</span>
-                    </h2>
-                    <p className="mt-4 text-lg text-muted-foreground">
-                        Soy un desarrollador apasionado por el software y la tecnología. Mi objetivo es transformar ideas en productos digitales funcionales y atractivos.
-                    </p>
-                    <p className="mt-4 text-base text-muted-foreground">
-                        Tengo experiencia en el desarrollo full stack, me especializo en construir aplicaciones web modernas que se ven bien y funcionan a la perfección. Siempre estoy aprendiendo nuevas tecnologías para mantenerme al día con las últimas tendencias del sector.
-                    </p>
-
-                    <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2">
-                        {features.map((feature, index) => (
-                            <motion.div
-                                key={index}
-                                initial={{ opacity: 0, y: 10 }}
-                                whileInView={{ opacity: 1, y: 0 }}
-                                viewport={{ once: true }}
-                                transition={{ duration: 0.5, delay: index * 0.1 }}
-                                className="rounded-lg border border-border bg-card/50 p-4 transition hover:border-primary/50"
-                            >
-                                <div className="mb-2 text-primary">{feature.icon}</div>
-                                <h3 className="font-semibold text-foreground">{feature.title}</h3>
-                                <p className="text-sm text-muted-foreground">{feature.description}</p>
-                            </motion.div>
-                        ))}
-                    </div>
-                </motion.div>
-
-                <motion.div
-                    initial={{ opacity: 0, x: 20 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.5 }}
-                    className="relative flex items-center justify-center lg:justify-end"
+                  {CAPABILITY_ICONS[i]}
+                </div>
+                <h3
+                  className="mb-1 font-display font-semibold text-text-1"
+                  style={{ fontSize: "1rem" }}
                 >
-                    <div className="relative aspect-[3/4] w-full max-w-md overflow-hidden rounded-2xl bg-gradient-to-br from-primary/20 to-secondary/20 p-4 sm:p-8">
-                        <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-20"></div>
-                        <div className="relative h-full w-full overflow-hidden rounded-xl border border-white/10 shadow-2xl">
-                            <Image
-                                src="/yoeditada.webp"
-                                alt="Foto de perfil"
-                                fill
-                                className="object-cover"
-                                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 20vw, 33vw"
-                            />
-                        </div>
-                    </div>
-                </motion.div>
+                  {cap.title}
+                </h3>
+                <p
+                  className="mb-3 text-text-2"
+                  style={{ fontSize: "0.875rem", lineHeight: "1.55" }}
+                >
+                  {cap.description}
+                </p>
+                <span
+                  className="mono-label rounded-sm px-2 py-0.5"
+                  style={{ backgroundColor: "var(--surface-2)" }}
+                >
+                  {cap.tag}
+                </span>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+
+        {/* Right column: framed portrait */}
+        <motion.div
+          initial={{ opacity: 0, x: 20 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: true, amount: 0.2 }}
+          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+          className="flex flex-col items-center lg:items-end"
+        >
+          <div className="w-full max-w-sm">
+            {/* Drawing frame */}
+            <div
+              className="relative p-3"
+              style={{
+                border: "1px solid var(--line-strong)",
+                backgroundColor: "var(--surface-1)",
+              }}
+            >
+              {/* Corner marks */}
+              {["top-0 left-0", "top-0 right-0", "bottom-0 left-0", "bottom-0 right-0"].map(
+                (pos, i) => (
+                  <span
+                    key={i}
+                    aria-hidden="true"
+                    className={`pointer-events-none absolute ${pos} h-3 w-3`}
+                    style={{
+                      borderTop: i < 2 ? "1px solid var(--accent)" : undefined,
+                      borderBottom: i >= 2 ? "1px solid var(--accent)" : undefined,
+                      borderLeft: i % 2 === 0 ? "1px solid var(--accent)" : undefined,
+                      borderRight: i % 2 !== 0 ? "1px solid var(--accent)" : undefined,
+                    }}
+                  />
+                )
+              )}
+
+              <div className="relative aspect-[3/4] w-full overflow-hidden">
+                <Image
+                  src="/yoeditada.webp"
+                  alt="Juan Toranzos, desarrollador Full Stack"
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 640px) 90vw, (max-width: 1024px) 45vw, 380px"
+                />
+              </div>
             </div>
-        </section>
-    );
+
+            {/* Caption — mono, like a drawing label */}
+            <div
+              className="mt-2 flex items-center justify-between px-1"
+              style={{ borderTop: "1px solid var(--line)" }}
+            >
+            </div>
+          </div>
+        </motion.div>
+      </div>
+    </section>
+  );
 };
 
 export default AboutMe;
